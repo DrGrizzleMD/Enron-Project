@@ -10,16 +10,32 @@ from tester import dump_classifier_and_data
 ### Task 1: Select what features you'll use.
 ### features_list is a list of strings, each of which is a feature name.
 ### The first feature must be "poi".
-features_list = ['poi','salary'] # You will need to use more features
+features_list = ['poi','salary','bonus','fraction_emails_to_poi','exercised_stock_options']
 
 ### Load the dictionary containing the dataset
 with open("final_project_dataset.pkl", "rb") as data_file:
-    data_dict = pickle.load(data_file)
+    enron_dict = pickle.load(data_file)
 
 ### Task 2: Remove outliers
+enron_dict.pop('LOCKHART EUGENE E',0)
+enron_dict.pop('TOTAL',0)
+
+### Removing out all 'loan_advances' because of missing values (NaNs)
+for name in enron_dict:
+    enron_dict[name].pop('loan_advances',0)
+
 ### Task 3: Create new feature(s)
+
+for name in enron_dict:
+    
+    enron_dict[name]['fraction_emails_to_poi'] = float(enron_dict[name]['from_this_person_to_poi'])/(float(enron_dict[name]['to_messages']) + 
+    (float(enron_dict[name]['from_this_person_to_poi'])))
+
+    enron_dict[name]['fraction_emails_from_poi'] = float(enron_dict[name]['from_poi_to_this_person'])/(float(enron_dict[name]['from_poi_to_this_person']) + 
+    (float(enron_dict[name]['from_messages'])))
+
 ### Store to my_dataset for easy export below.
-my_dataset = data_dict
+my_dataset = enron_dict
 
 ### Extract features and labels from dataset for local testing
 data = featureFormat(my_dataset, features_list, sort_keys = True)
@@ -43,9 +59,18 @@ clf = GaussianNB()
 ### http://scikit-learn.org/stable/modules/generated/sklearn.cross_validation.StratifiedShuffleSplit.html
 
 # Example starting point. Try investigating other evaluation techniques!
-from sklearn.cross_validation import train_test_split
-features_train, features_test, labels_train, labels_test = \
-    train_test_split(features, labels, test_size=0.3, random_state=42)
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
+
+data = featureFormat(enron_dict, features_list, sort_keys = True)
+labels, features = targetFeatureSplit(data)
+features_train, features_test, labels_train, labels_test = train_test_split(features, labels, 
+                                                                            test_size = 0.3, random_state = 42)
+    
+    
+clf = KNeighborsClassifier()
+clf.fit(features_train, labels_train)
+pred = clf.predict(features_test)
 
 ### Task 6: Dump your classifier, dataset, and features_list so anyone can
 ### check your results. You do not need to change anything below, but make sure
