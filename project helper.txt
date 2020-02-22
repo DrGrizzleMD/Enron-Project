@@ -1,0 +1,33 @@
+145 rows
+
+email_address
+deferral_payments
+loan_advances
+restricted_stock_deferred
+director_fees
+
+'fraction_emails_to_poi',
+'fraction_emails_from_poi'
+
+add 'fraction_emails_to_poi' to enron_dict
+sss = stratSplit
+
+'name',0
+ 'salary',1
+ 'to_messages',2
+ 'total_payments',3
+ 'bonus',4
+ 'deferred_income',5
+ 'total_stock_value',6
+ 'expenses',7
+ 'from_poi_to_this_person',8
+ 'exercised_stock_options',9
+ 'from_messages',10
+ 'other',11
+ 'from_this_person_to_poi',12
+ 'poi',13
+ 'long_term_incentive',14
+ 'shared_receipt_with_poi',15
+ 'restricted_stock',16
+ 'fraction_emails_to_poi',17
+ 'fraction_emails_from_poi'18
